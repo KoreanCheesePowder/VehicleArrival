@@ -1,0 +1,71 @@
+{
+  "type": "profile",
+  "dashboard": {
+    "states": [
+      {
+        "component": "main",
+        "capability": "buildbook37604.vehicleArrivalEntry",
+        "version": 1,
+        "idx": 0,
+        "group": "main",
+        "values": [],
+        "composite": true
+      }
+    ],
+    "actions": [],
+    "basicPlus": []
+  },
+  "detailView": [
+    {
+      "component": "main",
+      "capability": "buildbook37604.vehicleArrivalEntry",
+      "version": 1,
+      "values": []
+    },
+    {
+      "component": "main",
+      "capability": "buildbook37604.vehicleArrivalExit",
+      "version": 1,
+      "values": []
+    },
+    {
+      "component": "main",
+      "capability": "buildbook37604.driverInformation",
+      "version": 1,
+      "values": []
+    }
+  ],
+  "automation": {
+    "conditions": [
+      {
+        "component": "entryTrigger",
+        "capability": "switch",
+        "version": 1,
+        "values": [
+          {
+            "key": "switch.value",
+            "enabledValues": [
+              "on",
+              "off"
+            ]
+          }
+        ]
+      },
+      {
+        "component": "exitTrigger",
+        "capability": "switch",
+        "version": 1,
+        "values": [
+          {
+            "key": "switch.value",
+            "enabledValues": [
+              "on",
+              "off"
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": []
+  }
+}

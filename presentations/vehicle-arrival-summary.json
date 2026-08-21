@@ -1,0 +1,29 @@
+{
+  "dashboard": {
+    "states": [],
+    "actions": []
+  },
+  "detailView": [],
+  "automation": {
+    "conditions": [
+      {
+        "label": "차량 감지",
+        "displayType": "list",
+        "list": {
+          "alternatives": [
+            {
+              "key": "arrival",
+              "value": "입차 감지"
+            },
+            {
+              "key": "departure",
+              "value": "출차 감지"
+            }
+          ],
+          "value": "eventType.value"
+        }
+      }
+    ],
+    "actions": []
+  }
+}

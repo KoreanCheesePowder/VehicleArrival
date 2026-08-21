@@ -1,0 +1,25 @@
+{
+  "name": "Vehicle Arrival Trigger",
+  "attributes": {
+    "eventType": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "arrival",
+              "departure"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "value"
+        ]
+      }
+    }
+  },
+  "commands": {}
+}

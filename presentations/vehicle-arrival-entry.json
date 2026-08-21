@@ -1,0 +1,30 @@
+{
+  "dashboard": {
+    "states": [
+      {
+        "label": "최근 입차 {{plate.value}}"
+      }
+    ],
+    "actions": []
+  },
+  "detailView": [
+    {
+      "label": "차량번호",
+      "displayType": "state",
+      "state": {
+        "label": "{{plate.value}}"
+      }
+    },
+    {
+      "label": "입차시간",
+      "displayType": "state",
+      "state": {
+        "label": "{{eventTime.value}}"
+      }
+    }
+  ],
+  "automation": {
+    "conditions": [],
+    "actions": []
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "tag": "ko",
+  "label": "차량 감지",
+  "attributes": {
+    "eventType": {
+      "label": "차량 감지",
+      "displayTemplate": "{{value}}",
+      "i18n": {
+        "value": {
+          "idle": {
+            "label": "대기"
+          },
+          "arrival": {
+            "label": "입차 감지"
+          },
+          "departure": {
+            "label": "출차 감지"
+          }
+        }
+      }
+    }
+  },
+  "commands": {}
+}

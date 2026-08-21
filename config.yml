@@ -1,0 +1,8 @@
+name: C.P Vehicle Arrival
+packageKey: cp-vehicle-arrival
+permissions:
+  lan: {}
+  discovery: {}
+profiles:
+- id: cp-vehicle-arrival
+  file: profiles/vehicle-arrival.yml

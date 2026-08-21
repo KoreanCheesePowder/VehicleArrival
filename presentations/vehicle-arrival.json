@@ -1,0 +1,79 @@
+{
+  "dashboard": {
+    "states": [
+      {
+        "label": "{{vehicleType.value}} · {{eventStatus.value}} · {{plate.value}}"
+      }
+    ],
+    "actions": []
+  },
+  "detailView": [
+    {
+      "label": "차량 상태",
+      "displayType": "state",
+      "state": {
+        "label": "{{eventStatus.value}}"
+      }
+    },
+    {
+      "label": "차량 구분",
+      "displayType": "state",
+      "state": {
+        "label": "{{vehicleType.value}}"
+      }
+    },
+    {
+      "label": "차량번호",
+      "displayType": "state",
+      "state": {
+        "label": "{{plate.value}}"
+      }
+    },
+    {
+      "label": "감지시간",
+      "displayType": "state",
+      "state": {
+        "label": "{{eventTime.value}}"
+      }
+    }
+  ],
+  "automation": {
+    "conditions": [
+      {
+        "label": "차량 상태",
+        "displayType": "list",
+        "list": {
+          "alternatives": [
+            {
+              "key": "입차",
+              "value": "입차"
+            },
+            {
+              "key": "출차",
+              "value": "출차"
+            }
+          ],
+          "value": "eventStatus.value"
+        }
+      },
+      {
+        "label": "차량 구분",
+        "displayType": "list",
+        "list": {
+          "alternatives": [
+            {
+              "key": "가족",
+              "value": "가족"
+            },
+            {
+              "key": "방문",
+              "value": "방문"
+            }
+          ],
+          "value": "vehicleType.value"
+        }
+      }
+    ],
+    "actions": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tag": "ko",
+  "label": "최근 출차 차량",
+  "attributes": {
+    "plate": {
+      "label": "차량번호",
+      "displayTemplate": "{{value}}",
+      "i18n": {}
+    },
+    "eventTime": {
+      "label": "출차시간",
+      "displayTemplate": "{{value}}",
+      "i18n": {}
+    }
+  },
+  "commands": {}
+}

@@ -1,0 +1,51 @@
+{
+  "tag": "ko",
+  "label": "차량 감지",
+  "attributes": {
+    "eventStatus": {
+      "label": "차량 상태",
+      "displayTemplate": "{{value}}",
+      "i18n": {
+        "value": {
+          "대기": {
+            "label": "대기"
+          },
+          "입차": {
+            "label": "입차"
+          },
+          "출차": {
+            "label": "출차"
+          }
+        }
+      }
+    },
+    "vehicleType": {
+      "label": "차량 구분",
+      "displayTemplate": "{{value}}",
+      "i18n": {
+        "value": {
+          "미분류": {
+            "label": "미분류"
+          },
+          "가족": {
+            "label": "가족"
+          },
+          "방문": {
+            "label": "방문"
+          }
+        }
+      }
+    },
+    "plate": {
+      "label": "차량번호",
+      "displayTemplate": "{{value}}",
+      "i18n": {}
+    },
+    "eventTime": {
+      "label": "감지시간",
+      "displayTemplate": "{{value}}",
+      "i18n": {}
+    }
+  },
+  "commands": {}
+}

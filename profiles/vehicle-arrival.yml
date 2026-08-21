@@ -1,0 +1,58 @@
+name: cp-vehicle-arrival
+components:
+  - id: main
+    label: 차량 감지
+    capabilities:
+      - id: buildbook37604.vehicleArrivalEntry
+        version: 1
+      - id: buildbook37604.vehicleArrivalExit
+        version: 1
+      - id: buildbook37604.vehicleArrivalSummary
+        version: 1
+      - id: buildbook37604.driverInformation
+        version: 1
+      - id: refresh
+        version: 1
+    categories:
+      - name: Hub
+  - id: entryTrigger
+    label: 입차 감지
+    capabilities:
+      - id: switch
+        version: 1
+
+  - id: exitTrigger
+    label: 출차 감지
+    capabilities:
+      - id: switch
+        version: 1
+
+preferences:
+  - name: nasIp
+    title: NAS IP
+    description: "Wallpad-LanLogger NAS IP address"
+    required: true
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "192.168.1.92"
+  - name: nasPort
+    title: NAS 이벤트 포트
+    description: "Wallpad-LanLogger Edge 이벤트 TCP 포트"
+    required: true
+    preferenceType: integer
+    definition:
+      minimum: 1
+      maximum: 65535
+      default: 19093
+  - name: familyPlates
+    title: 가족 차량번호
+    description: "쉼표로 여러 대 입력 (예: 229가7367,12나3456)"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: ""
+metadata:
+  mnmn: SmartThingsCommunity
+  vid: PLACEHOLDER
