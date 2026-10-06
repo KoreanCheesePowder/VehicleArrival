@@ -1,0 +1,83 @@
+{
+    "mnmn": "SmartThingsCommunity",
+    "vid": "d570f0a4-6856-3dbb-a2d8-215b4bb5db2d",
+    "version": "0.0.1",
+    "type": "profile",
+    "dashboard": {
+        "states": [
+            {
+                "component": "main",
+                "capability": "buildbook37604.vehicleArrivalEntry",
+                "version": 1,
+                "idx": 0,
+                "group": "main",
+                "values": [],
+                "composite": true
+            }
+        ],
+        "actions": [],
+        "basicPlus": []
+    },
+    "detailView": [
+        {
+            "component": "main",
+            "capability": "buildbook37604.vehicleArrivalEntry",
+            "version": 1,
+            "values": [],
+            "patch": []
+        },
+        {
+            "component": "main",
+            "capability": "buildbook37604.vehicleArrivalExit",
+            "version": 1,
+            "values": [],
+            "patch": []
+        },
+        {
+            "component": "main",
+            "capability": "buildbook37604.driverInformation",
+            "version": 1,
+            "values": [],
+            "patch": []
+        }
+    ],
+    "automation": {
+        "conditions": [
+            {
+                "component": "entryTrigger",
+                "capability": "switch",
+                "version": 1,
+                "values": [
+                    {
+                        "enabledValues": [
+                            "on",
+                            "off"
+                        ],
+                        "key": "switch.value"
+                    }
+                ],
+                "patch": [],
+                "exclusion": []
+            },
+            {
+                "component": "exitTrigger",
+                "capability": "switch",
+                "version": 1,
+                "values": [
+                    {
+                        "enabledValues": [
+                            "on",
+                            "off"
+                        ],
+                        "key": "switch.value"
+                    }
+                ],
+                "patch": [],
+                "exclusion": []
+            }
+        ],
+        "actions": []
+    },
+    "presentationId": "d570f0a4-6856-3dbb-a2d8-215b4bb5db2d",
+    "manufacturerName": "SmartThingsCommunity"
+}

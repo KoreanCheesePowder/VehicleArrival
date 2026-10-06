@@ -1,0 +1,9 @@
+치즈가루 시스템 모니터 연동
+현재 버전: v1.4.0
+
+- 기존 Capability / Profile / PackageKey / 차량 입출차 및 루틴 로직 유지
+- Driver 단위 60초 주기 Edge Heartbeat 사용
+- 모니터 전송 실패는 기존 차량 이벤트 동작에 영향을 주지 않음
+- UDP 8791 텔레메트리 사용
+- Vehicle NAS Logger 이벤트 채널(19093)은 Ping/TCP 상태 판정 대상에서 제외
+- Heartbeat 메타데이터에 Driver Name / Version / PackageKey / Target을 명시적으로 포함

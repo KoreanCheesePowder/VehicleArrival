@@ -2,7 +2,7 @@
 Set-Location $PSScriptRoot
 
 Write-Host "==============================================="
-Write-Host " C.P Vehicle Arrival Edge Driver v1.3.6"
+Write-Host " C.P Vehicle Arrival Edge Driver v1.4.0"
 Write-Host "==============================================="
 Write-Host ""
 
@@ -106,7 +106,7 @@ $profile = [regex]::Replace($profile,'(?m)^\s*mnmn:\s*.*$',"  mnmn: $mnmn")
 $profile = [regex]::Replace($profile,'(?m)^\s*vid:\s*.*$',"  vid: $vid")
 [IO.File]::WriteAllText((Resolve-Path $profilePath),$profile,(New-Object Text.UTF8Encoding($false)))
 
-Write-Host "[4/4] Packaging/installing v1.3.6..."
+Write-Host "[4/4] Packaging/installing v1.4.0..."
 & smartthings edge:drivers:package . --install
 if ($LASTEXITCODE -ne 0) {
     throw "Driver package/install failed."
@@ -125,11 +125,11 @@ Write-Host " - 동일 방향 연속 감지도 매번 OFF -> ON 이벤트 재발�
 
 
 Write-Host ""
-Write-Host "v1.3.6 profile migration enabled."
+Write-Host "v1.4.0 profile migration enabled."
 Write-Host "Existing Vehicle Arrival device will force-refresh its profile/VID on driver init."
 Write-Host "Wait about 10-30 seconds, then check devices:status."
 
 
 Write-Host ""
 Write-Host "Existing-device refresh enabled."
-Write-Host "driverVersion should become v1.3.6 within about 15-30 seconds."
+Write-Host "driverVersion should become v1.4.0 within about 15-30 seconds."

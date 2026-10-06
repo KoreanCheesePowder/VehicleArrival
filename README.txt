@@ -1,4 +1,4 @@
-C.P Vehicle Arrival Edge Driver v1.3.6
+C.P Vehicle Arrival Edge Driver v1.4.0
 
 Routine trigger redesign:
 - Uses STANDARD SmartThings switch capability.

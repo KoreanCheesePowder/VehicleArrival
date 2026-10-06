@@ -1,10 +1,12 @@
+local CP_MONITOR_META = { driver_name = "C.P Vehicle Arrival", driver_version = "v1.4.0", package_key = "cp-vehicle-arrival", target_name = "Vehicle NAS Logger", host_pref = "nasIp", port_pref = "nasPort", transport = "tcp", direct_monitor_pref = "nasIp" }
+local cp_monitor = require "cp_monitor"
 local capabilities = require "st.capabilities"
 local Driver = require "st.driver"
 local log = require "log"
 local socket = require "cosock.socket"
 local json = require "st.json"
 
-local DRIVER_VERSION = "v1.3.6"
+local DRIVER_VERSION = "v1.4.0"
 local AUTHOR = "치즈가루"
 local DEVICE_DNI = "cp-vehicle-arrival"
 local DEVICE_PROFILE = "cp-vehicle-arrival"
@@ -16,6 +18,7 @@ local info_cap = capabilities["buildbook37604.driverInformation"]
 
 local connections = {}
 local generations = {}
+local monitor_timers = {}
 local entry_pulse_generation = 0
 local exit_pulse_generation = 0
 
@@ -212,11 +215,13 @@ local function start_connection(device)
       if ok then
         connections[id] = tcp
         tcp:settimeout(3600)
+        pcall(cp_monitor.connection, device, "connected")
         log.info("NAS connected - persistent receive mode")
         emit_info(device)
 
         local sent, send_err = tcp:send("CONFIG|" .. plates .. "\n")
         if sent then
+          pcall(cp_monitor.tx, device, #( "CONFIG|" .. plates .. "\n"), "CONFIG")
           log.info("Family plates synchronized")
         else
           log.warn("CONFIG send failed: " .. tostring(send_err))
@@ -229,6 +234,7 @@ local function start_connection(device)
             break
           end
 
+          pcall(cp_monitor.rx, device, #line, "NAS RX")
           if line:sub(1, 6) == "EVENT|" then
             local parsed, evt = pcall(json.decode, line:sub(7))
             if parsed and evt and evt.event == "car" then
@@ -243,6 +249,7 @@ local function start_connection(device)
           end
         end
       else
+        pcall(cp_monitor.connection, device, "disconnected", tostring(err))
         log.warn("NAS connect failed: " .. tostring(err))
       end
 
@@ -269,6 +276,50 @@ local function start_info_heartbeat(device)
   )
 end
 
+local function stop_monitor_heartbeat(driver, device)
+  local id = device and device.id
+  if not id then return end
+  local timer = monitor_timers[id]
+  if timer then
+    pcall(function() driver:cancel_timer(timer) end)
+    monitor_timers[id] = nil
+  end
+end
+
+local function start_monitor_heartbeat(driver, device)
+  if not driver or not device then return end
+
+  -- Vehicle Arrival keeps a long-lived NAS receive coroutine on device.thread.
+  -- Run telemetry on the Driver timer queue instead so the periodic heartbeat
+  -- is independent of that persistent receive loop.
+  stop_monitor_heartbeat(driver, device)
+
+  -- The Driver-level timer is separate from cp_monitor.start(), so inject
+  -- metadata explicitly before the first send. Without this, the telemetry
+  -- payload falls back to "C.P Edge Driver" / packageKey "unknown".
+  pcall(cp_monitor.configure, device, CP_MONITOR_META)
+
+  pcall(cp_monitor.send, device)
+  pcall(function()
+    driver:call_with_delay(2, function()
+      pcall(cp_monitor.send, device)
+    end, "cp-vehicle-monitor-initial")
+  end)
+
+  local ok, timer_or_err = pcall(function()
+    return driver:call_on_schedule(60, function()
+      pcall(cp_monitor.send, device)
+    end, "cp-vehicle-monitor-heartbeat")
+  end)
+
+  if ok and timer_or_err then
+    monitor_timers[device.id] = timer_or_err
+    log.info("Vehicle monitor heartbeat scheduled on driver timer")
+  else
+    log.error("Vehicle monitor heartbeat schedule failed: " .. tostring(timer_or_err))
+  end
+end
+
 local function activate_device(driver, device)
   log.info("Vehicle Arrival activate " .. DRIVER_VERSION)
 
@@ -291,6 +342,7 @@ local function activate_device(driver, device)
 
   start_info_heartbeat(device)
   start_connection(device)
+  start_monitor_heartbeat(driver, device)
 end
 
 local function start_driver_info_heartbeat(device)
@@ -339,6 +391,7 @@ local function info_changed(driver, device, event, args)
 end
 
 local function removed(driver, device)
+  stop_monitor_heartbeat(driver, device)
   close_connection(device)
 end
 
