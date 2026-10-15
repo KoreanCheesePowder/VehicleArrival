@@ -1,4 +1,4 @@
-local CP_MONITOR_META = { driver_name = "C.P Vehicle Arrival", driver_version = "v1.4.0", package_key = "cp-vehicle-arrival", target_name = "Vehicle NAS Logger", host_pref = "nasIp", port_pref = "nasPort", transport = "tcp", direct_monitor_pref = "nasIp" }
+local CP_MONITOR_META = { driver_name = "C.P Vehicle Arrival", driver_version = "v1.4.1", package_key = "cp-vehicle-arrival", target_name = "Vehicle NAS Logger", host_pref = "nasIp", port_pref = "nasPort", transport = "tcp", direct_monitor_pref = "nasIp" }
 local cp_monitor = require "cp_monitor"
 local capabilities = require "st.capabilities"
 local Driver = require "st.driver"
@@ -6,7 +6,7 @@ local log = require "log"
 local socket = require "cosock.socket"
 local json = require "st.json"
 
-local DRIVER_VERSION = "v1.4.0"
+local DRIVER_VERSION = "v1.4.1"
 local AUTHOR = "치즈가루"
 local DEVICE_DNI = "cp-vehicle-arrival"
 local DEVICE_PROFILE = "cp-vehicle-arrival"
@@ -17,6 +17,7 @@ local trigger_cap = capabilities["buildbook37604.vehicleArrivalSummary"]
 local info_cap = capabilities["buildbook37604.driverInformation"]
 
 local connections = {}
+local online_states = {}
 local generations = {}
 local monitor_timers = {}
 local entry_pulse_generation = 0
@@ -183,6 +184,29 @@ local function emit_vehicle_event(device, evt)
   end
 end
 
+-- Keep SmartThings cloud device health in sync with the NAS TCP link.
+-- Telemetry traffic alone does not update SmartThings online/offline state.
+local function set_device_online_state(device, online)
+  if not device then return end
+  local id = device.id
+  -- Reassert online health on each successful NAS response/heartbeat even if the
+  -- current local state is online; this recovers cloud health after a hub restart.
+  if not online and online_states[id] == false then return end
+  local ok, err = pcall(function()
+    if online then
+      device:online()
+    else
+      device:offline()
+    end
+  end)
+  if ok then
+    online_states[id] = online
+    log.info("Vehicle Arrival health " .. (online and "ONLINE" or "OFFLINE"))
+  else
+    log.error("Vehicle Arrival health update failed: " .. tostring(err))
+  end
+end
+
 local function close_connection(device)
   local id = device.id
   generations[id] = (generations[id] or 0) + 1
@@ -202,9 +226,9 @@ local function start_connection(device)
 
   device.thread:call_with_delay(2.0, function()
     while generations[id] == my_generation do
-      local ip = tostring(device.preferences.nasIp or "192.168.1.92")
-      local port = tonumber(device.preferences.nasPort) or 19093
-      local plates = tostring(device.preferences.familyPlates or "")
+      local ip = tostring((device.preferences and device.preferences.nasIp) or "192.168.1.53")
+      local port = tonumber(device.preferences and device.preferences.nasPort) or 19093
+      local plates = tostring((device.preferences and device.preferences.familyPlates) or "")
 
       log.info(string.format("Connecting NAS %s:%d", ip, port))
 
@@ -216,6 +240,7 @@ local function start_connection(device)
         connections[id] = tcp
         tcp:settimeout(3600)
         pcall(cp_monitor.connection, device, "connected")
+        set_device_online_state(device, true)
         log.info("NAS connected - persistent receive mode")
         emit_info(device)
 
@@ -235,6 +260,7 @@ local function start_connection(device)
           end
 
           pcall(cp_monitor.rx, device, #line, "NAS RX")
+          set_device_online_state(device, true)
           if line:sub(1, 6) == "EVENT|" then
             local parsed, evt = pcall(json.decode, line:sub(7))
             if parsed and evt and evt.event == "car" then
@@ -259,6 +285,8 @@ local function start_connection(device)
       pcall(function() tcp:close() end)
 
       if generations[id] == my_generation then
+        pcall(cp_monitor.connection, device, "disconnected")
+        set_device_online_state(device, false)
         log.info("Retrying NAS connection in 5 seconds")
         socket.sleep(5)
       end
@@ -309,6 +337,9 @@ local function start_monitor_heartbeat(driver, device)
   local ok, timer_or_err = pcall(function()
     return driver:call_on_schedule(60, function()
       pcall(cp_monitor.send, device)
+      if connections[device.id] then
+        set_device_online_state(device, true)
+      end
     end, "cp-vehicle-monitor-heartbeat")
   end)
 
@@ -393,6 +424,7 @@ end
 local function removed(driver, device)
   stop_monitor_heartbeat(driver, device)
   close_connection(device)
+  online_states[device.id] = nil
 end
 
 local function refresh_handler(driver, device, command)

@@ -1,6 +1,4 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0SETUP-AND-INSTALL.ps1"
-echo.
-pause
+call "%~dp0UPDATE-EXISTING.cmd"

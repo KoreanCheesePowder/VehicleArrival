@@ -1,0 +1,6 @@
+Cheese System Monitor integration - v1.4.1
+- Passive driver-level telemetry every 60s over UDP/8791.
+- Vehicle NAS logger TCP port 19093 excluded from monitor's independent ping/TCP verdict.
+- System Monitor telemetry failure never forces SmartThings online/offline status.
+- SmartThings device health now follows Vehicle Arrival's own NAS TCP socket.
+- Existing monitor broadcast target logic and vehicle events unchanged.
